@@ -6,30 +6,36 @@
   <title>The Smart Shadow</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
   <style>
-    body {
+    * {
+      box-sizing: border-box;
       margin: 0;
+      padding: 0;
+    }
+
+    body {
       font-family: 'Orbitron', sans-serif;
       background: black;
       color: gold;
-      overflow: hidden;
+      overflow-x: hidden;
+      min-height: 100vh;
     }
 
     header {
       text-align: center;
-      padding-top: 10vh;
-      z-index: 10;
+      padding: 10vh 5vw 5vh;
       position: relative;
+      z-index: 10;
     }
 
     h1 {
-      font-size: 3rem;
-      margin-bottom: 0.5rem;
+      font-size: 6vw;
+      margin-bottom: 1rem;
     }
 
     p {
       font-size: 1.2rem;
       color: #d4af37;
-      max-width: 600px;
+      max-width: 90%;
       margin: 0 auto;
     }
 
@@ -37,26 +43,26 @@
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
+      gap: 1rem;
       margin-top: 3rem;
       z-index: 10;
-      position: relative;
+      padding: 0 2vw;
     }
 
     .social-links a {
       color: gold;
       text-decoration: none;
-      margin: 0.5rem 1rem;
-      font-size: 1rem;
+      font-size: 0.95rem;
       border: 1px solid gold;
-      padding: 0.5rem 1rem;
-      border-radius: 8px;
+      padding: 0.6rem 1.2rem;
+      border-radius: 10px;
       transition: background 0.3s, transform 0.3s;
     }
 
     .social-links a:hover {
       background: gold;
       color: black;
-      transform: scale(1.1);
+      transform: scale(1.05);
     }
 
     canvas {
@@ -64,6 +70,32 @@
       top: 0;
       left: 0;
       z-index: 0;
+    }
+
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2rem;
+      }
+
+      .social-links a {
+        font-size: 0.85rem;
+        padding: 0.5rem 1rem;
+      }
+
+      p {
+        font-size: 1rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      .social-links {
+        flex-direction: column;
+        gap: 0.8rem;
+      }
     }
   </style>
 </head>
