@@ -30,6 +30,7 @@
     h1 {
       font-size: 6vw;
       margin-bottom: 1rem;
+      animation: fadeInDown 2s ease-out;
     }
 
     p {
@@ -37,6 +38,7 @@
       color: #d4af37;
       max-width: 90%;
       margin: 0 auto;
+      animation: fadeIn 3s ease-in;
     }
 
     .social-links {
@@ -47,6 +49,7 @@
       margin-top: 3rem;
       z-index: 10;
       padding: 0 2vw;
+      animation: fadeInUp 2s ease-in-out;
     }
 
     .social-links a {
@@ -57,6 +60,8 @@
       padding: 0.6rem 1.2rem;
       border-radius: 10px;
       transition: background 0.3s, transform 0.3s;
+      background: rgba(255, 215, 0, 0.1);
+      backdrop-filter: blur(5px);
     }
 
     .social-links a:hover {
@@ -97,6 +102,37 @@
         gap: 0.8rem;
       }
     }
+
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
   </style>
 </head>
 <body>
@@ -116,18 +152,20 @@
   </header>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.halo.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.rings.min.js"></script>
   <script>
-    VANTA.HALO({
+    VANTA.RINGS({
       el: "body",
       mouseControls: true,
       touchControls: true,
       gyroControls: false,
-      baseColor: 0x000000,
+      minHeight: 200.00,
+      minWidth: 200.00,
       backgroundColor: 0x000000,
-      amplitudeFactor: 2.0,
-      size: 1.5,
       color: 0xd4af37,
+      waveHeight: 20.00,
+      shininess: 80.00,
+      ringRadius: 15.00,
     });
   </script>
 </body>
