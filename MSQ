@@ -1,1 +1,721 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<title>CyberSecure Exam - اختبار الأمن السيبراني</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cairo&family=Major+Mono+Display&display=swap" rel="stylesheet">
+
+<style>
+  /* RESET */
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+  html, body {
+    margin: 0; padding: 0;
+    height: 100%;
+    font-family: 'Cairo', sans-serif;
+    background: #000010;
+    color: #00ff99;
+    overflow: hidden;
+  }
+  body {
+    display: flex;
+    justify-content: flex-start;
+    align-items: stretch;
+    min-height: 100vh;
+  }
+
+  /* CONTAINER */
+  #app {
+    display: flex;
+    flex-grow: 1;
+    height: 100vh;
+    background: linear-gradient(135deg, #001a1a, #003333);
+    box-shadow: inset 0 0 100px #00ff9933;
+  }
+
+  /* SIDEBAR */
+  #sidebar {
+    width: 280px;
+    background: #002222;
+    box-shadow: 0 0 20px #00ff9977 inset;
+    display: flex;
+    flex-direction: column;
+    padding: 2rem 1.2rem;
+    user-select: none;
+    transition: transform 0.4s ease, width 0.4s ease;
+  }
+  #sidebar.hidden {
+    transform: translateX(100%);
+  }
+  #sidebar header {
+    font-family: 'Major Mono Display', monospace;
+    font-size: clamp(1.8rem, 2vw, 2.3rem);
+    color: #00ff99;
+    letter-spacing: 5px;
+    margin-bottom: 1.5rem;
+    text-shadow: 0 0 8px #00ff99cc;
+    text-align: center;
+  }
+  #progress-list {
+    flex-grow: 1;
+    overflow-y: auto;
+  }
+  #progress-list button {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: #00ff99cc;
+    padding: 0.7rem 0.8rem;
+    font-size: clamp(0.95rem, 1.2vw, 1.1rem);
+    text-align: right;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background 0.3s ease;
+    white-space: nowrap;
+  }
+  #progress-list button:hover {
+    background: #00ff9955;
+    color: #001f1f;
+  }
+  #progress-list button.current {
+    background: #00ff99aa;
+    color: #001f1f;
+    font-weight: 700;
+    box-shadow: 0 0 10px #00ff99ee;
+  }
+  #progress-list button.correct {
+    color: #66ffbbaa;
+  }
+  #progress-list button.incorrect {
+    color: #ff4477aa;
+  }
+  #toggle-sidebar {
+    background: #003333cc;
+    border: none;
+    color: #00ff99;
+    font-size: clamp(1.2rem, 1.8vw, 1.6rem);
+    padding: 1rem 0;
+    cursor: pointer;
+    text-align: center;
+    user-select: none;
+    border-radius: 12px;
+    margin-top: 1.5rem;
+    letter-spacing: 1.5px;
+    transition: background 0.3s ease;
+  }
+  #toggle-sidebar:hover {
+    background: #00ff9955;
+    color: #001f1f;
+  }
+
+  /* MAIN CONTENT */
+  #main-content {
+    flex-grow: 1;
+    position: relative;
+    padding: clamp(20px, 3vw, 40px) clamp(20px, 5vw, 50px);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  }
+  #question-header {
+    font-family: 'Major Mono Display', monospace;
+    font-size: clamp(1.5rem, 2.5vw, 2rem);
+    margin-bottom: 1rem;
+    text-shadow: 0 0 10px #00ff99bb;
+    user-select: none;
+  }
+  #question-text {
+    font-size: clamp(1.3rem, 2vw, 1.8rem);
+    font-weight: 600;
+    line-height: 1.4;
+    margin-bottom: 2.5rem;
+    padding: 1.25rem 1.8rem;
+    background: #003333dd;
+    border-radius: 25px;
+    box-shadow: 0 0 30px #00ff9977 inset;
+    user-select: text;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+  }
+  #question-text:hover {
+    box-shadow: 0 0 70px #00ff99ee inset;
+    transform: scale(1.02);
+  }
+
+  /* OPTIONS */
+  ul.options {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 3rem 0;
+  }
+  ul.options li {
+    background: #001f1f;
+    color: #00ff99cc;
+    padding: 1.3rem 1.8rem;
+    border-radius: 16px;
+    margin-bottom: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 0 10px #005f0044;
+    transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+    user-select: none;
+    border: 2px solid transparent;
+  }
+  ul.options li:hover {
+    background: #00ff9977;
+    color: #001f1f;
+    box-shadow: 0 0 25px #00ff9977;
+    transform: scale(1.05);
+  }
+  ul.options li.selected {
+    background: #00ff99dd;
+    color: #001f1f;
+    box-shadow: inset 0 0 30px #00cc9977, 0 0 40px #00ff99dd;
+    border-color: #00cc99;
+  }
+  ul.options li.correct {
+    background: #33ffbbcc !important;
+    color: #003322 !important;
+    box-shadow: 0 0 35px #33ffbbcc !important;
+    border-color: #33ffbbcc !important;
+  }
+  ul.options li.incorrect {
+    background: #ff4477cc !important;
+    color: #330011 !important;
+    box-shadow: 0 0 35px #ff4477cc !important;
+    border-color: #ff4477cc !important;
+  }
+
+  /* SHORT ANSWER */
+  input.short-answer {
+    width: 100%;
+    font-size: clamp(1.1rem, 2vw, 1.3rem);
+    padding: 1.3rem 1.6rem;
+    border-radius: 22px;
+    border: 2px solid #00ff99aa;
+    outline: none;
+    box-shadow: 0 0 20px #00ff9977 inset;
+    font-weight: 700;
+    color: #001f1f;
+    user-select: text;
+    font-family: 'Cairo', sans-serif;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  input.short-answer:focus {
+    border-color: #00ffccff;
+    box-shadow: 0 0 30px #00ffccff inset;
+  }
+
+  /* CONTROLS */
+  .controls {
+    display: flex;
+    justify-content: space-between;
+    margin-top: auto;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  button.control-btn {
+    background: #00ff99cc;
+    border: none;
+    padding: 1.2rem 3rem;
+    font-weight: 900;
+    font-size: clamp(1rem, 2vw, 1.3rem);
+    border-radius: 25px;
+    cursor: pointer;
+    color: #001f1f;
+    box-shadow: 0 0 25px #00ff99cc;
+    letter-spacing: 1.4px;
+    transition: all 0.3s ease;
+    user-select: none;
+    flex-grow: 1;
+    min-width: 120px;
+    text-align: center;
+  }
+  button.control-btn:hover:not(:disabled) {
+    background: #00cc77ff;
+    box-shadow: 0 0 50px #00cc77ff;
+    color: #001100;
+    transform: scale(1.05);
+  }
+  button.control-btn:disabled {
+    background: #00552255;
+    box-shadow: none;
+    cursor: not-allowed;
+    color: #004411aa;
+  }
+
+  /* TIMER RING */
+  #timer-container {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    width: 90px;
+    height: 90px;
+    background: transparent;
+    user-select: none;
+    z-index: 1000;
+  }
+  #timer-svg {
+    transform: rotate(-90deg);
+  }
+  #timer-circle-bg {
+    stroke: #002a1f;
+    stroke-width: 10;
+  }
+  #timer-circle {
+    stroke: #00ff99;
+    stroke-width: 10;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 1s linear;
+  }
+  #timer-text {
+    font-family: 'Major Mono Display', monospace;
+    fill: #00ff99;
+    font-size: 28px;
+    text-anchor: middle;
+    dominant-baseline: middle;
+    user-select: none;
+  }
+
+  /* RESULTS */
+  #results {
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+    background: #003322dd;
+    border-radius: 25px;
+    padding: 3rem 3.5rem;
+    box-shadow: 0 0 50px #00ff9977;
+    color: #33ffbbcc;
+    font-weight: 700;
+    font-size: clamp(1rem, 1.8vw, 1.2rem);
+    line-height: 1.4;
+  }
+  #results h2 {
+    font-family: 'Major Mono Display', monospace;
+    font-size: clamp(2.5rem, 5vw, 3rem);
+    text-align: center;
+    margin-bottom: 2.5rem;
+    color: #00ff99cc;
+    text-shadow: 0 0 15px #00ff99aa;
+  }
+  .result-question {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #00ff9955;
+  }
+  .result-question b {
+    font-size: 1.4rem;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+  .correct {
+    color: #33ffbbdd;
+    text-shadow: 0 0 10px #33ffbbdd;
+  }
+  .incorrect {
+    color: #ff5577dd;
+    text-shadow: 0 0 10px #ff5577dd;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar {
+    width: 9px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #001410;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #00ff9977;
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #00ff99dd;
+  }
+
+  /* RESPONSIVE */
+  @media(max-width: 900px) {
+    #sidebar {
+      width: 240px;
+      padding: 1.5rem 1rem;
+    }
+    #question-text {
+      font-size: clamp(1.1rem, 2vw, 1.5rem);
+      padding: 1rem 1.3rem;
+      margin-bottom: 1.8rem;
+    }
+    ul.options li {
+      padding: 1.1rem 1.4rem;
+      font-size: clamp(1rem, 1.8vw, 1.15rem);
+      margin-bottom: 1rem;
+    }
+    button.control-btn {
+      padding: 1rem 2rem;
+      font-size: clamp(0.95rem, 2vw, 1.15rem);
+    }
+  }
+  @media(max-width: 640px) {
+    #app {
+      flex-direction: column;
+      height: 100%;
+    }
+    #sidebar {
+      width: 100%;
+      height: 120px;
+      flex-direction: row;
+      padding: 0 1rem;
+      overflow-x: auto;
+      box-shadow: 0 0 15px #00ff9955 inset;
+    }
+    #sidebar header {
+      font-size: 1.6rem;
+      margin: 0 1rem 0 0;
+      white-space: nowrap;
+      flex-shrink: 0;
+      align-self: center;
+    }
+    #progress-list {
+      flex-grow: 1;
+      display: flex;
+      gap: 0.7rem;
+      overflow-x: auto;
+      padding-bottom: 0.5rem;
+    }
+    #progress-list button {
+      flex-shrink: 0;
+      white-space: nowrap;
+      padding: 0.5rem 0.8rem;
+      font-size: 0.9rem;
+      text-align: center;
+      border-radius: 15px;
+    }
+    #toggle-sidebar {
+      display: none;
+    }
+    #main-content {
+      padding: 2rem 1.5rem 3rem 1.5rem;
+      height: calc(100vh - 120px);
+      overflow-y: auto;
+    }
+    #timer-container {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      width: 70px;
+      height: 70px;
+    }
+    #timer-text {
+      font-size: 20px;
+    }
+  }
+  @media(max-width: 380px) {
+    #question-header {
+      font-size: 1.3rem;
+    }
+    #question-text {
+      font-size: 1.1rem;
+      padding: 0.8rem 1rem;
+    }
+    ul.options li {
+      font-size: 1rem;
+      padding: 0.7rem 1rem;
+    }
+    button.control-btn {
+      padding: 0.7rem 1.2rem;
+      font-size: 1rem;
+    }
+  }
+</style>
+
+</head>
+<body>
+<div id="app" role="main" aria-label="اختبار الأمن السيبراني">
+  <aside id="sidebar" aria-label="قائمة الأسئلة">
+    <header>CyberSecure</header>
+    <div id="progress-list" role="list" aria-live="polite" aria-atomic="true" tabindex="0"></div>
+    <button id="toggle-sidebar" aria-expanded="true" aria-controls="sidebar" aria-label="إخفاء القائمة">إخفاء القائمة</button>
+  </aside>
+
+  <section id="main-content">
+    <div id="question-header" aria-live="polite" aria-atomic="true"></div>
+    <div id="question-text" tabindex="0" aria-live="polite" aria-atomic="true" aria-relevant="additions"></div>
+
+    <ul id="options-list" class="options" role="list" aria-label="خيارات السؤال"></ul>
+
+    <input type="text" id="short-answer-input" class="short-answer" aria-label="إدخال الإجابة النصية" style="display:none;" autocomplete="off" />
+
+    <div class="controls">
+      <button id="prev-btn" class="control-btn" aria-label="السؤال السابق" disabled>السابق</button>
+      <button id="next-btn" class="control-btn" aria-label="السؤال التالي">التالي</button>
+      <button id="finish-btn" class="control-btn" aria-label="إنهاء الاختبار" style="display:none;">إنهاء</button>
+    </div>
+  </section>
+
+  <svg id="timer-container" viewBox="0 0 120 120" aria-hidden="true" role="presentation">
+    <circle id="timer-circle-bg" cx="60" cy="60" r="54" fill="none" />
+    <circle id="timer-circle" cx="60" cy="60" r="54" fill="none" stroke-dasharray="339.292" stroke-dashoffset="0" />
+    <text id="timer-text" x="60" y="70">90</text>
+  </svg>
+
+  <section id="results" hidden aria-live="assertive" aria-label="نتيجة الاختبار" tabindex="0"></section>
+</div>
+
+<script>
+(async function() {
+  // تحميل ملف JSON
+  const res = await fetch('questions.json');
+  let questions = (await res.json()).questions;
+
+  // حالة التطبيق
+  let currentIndex = 0;
+  let userAnswers = new Array(questions.length).fill(null);
+  const timerDuration = 90; // ثواني
+  let timerTimeLeft = timerDuration;
+  let timerInterval = null;
+
+  // العناصر
+  const questionHeader = document.getElementById('question-header');
+  const questionText = document.getElementById('question-text');
+  const optionsList = document.getElementById('options-list');
+  const shortAnswerInput = document.getElementById('short-answer-input');
+  const prevBtn = document.getElementById('prev-btn');
+  const nextBtn = document.getElementById('next-btn');
+  const finishBtn = document.getElementById('finish-btn');
+  const resultsSection = document.getElementById('results');
+  const progressList = document.getElementById('progress-list');
+  const toggleSidebarBtn = document.getElementById('toggle-sidebar');
+  const timerCircle = document.getElementById('timer-circle');
+  const timerText = document.getElementById('timer-text');
+  const timerRadius = 54;
+  const timerCircumference = 2 * Math.PI * timerRadius;
+
+  timerCircle.style.strokeDasharray = timerCircumference;
+
+  // تحديث عداد التايمر الدائري
+  function updateTimerCircle() {
+    const offset = timerCircumference * (1 - timerTimeLeft / timerDuration);
+    timerCircle.style.strokeDashoffset = offset;
+    timerText.textContent = timerTimeLeft;
+    if(timerTimeLeft <= 10) {
+      timerText.style.fill = '#ff4466';
+      timerCircle.style.stroke = '#ff4466';
+    } else {
+      timerText.style.fill = '#00ff99';
+      timerCircle.style.stroke = '#00ff99';
+    }
+  }
+
+  // ابدأ تايمر جديد
+  function startTimer() {
+    clearInterval(timerInterval);
+    timerTimeLeft = timerDuration;
+    updateTimerCircle();
+    timerInterval = setInterval(() => {
+      timerTimeLeft--;
+      updateTimerCircle();
+      if(timerTimeLeft <= 0) {
+        clearInterval(timerInterval);
+        autoNextQuestion();
+      }
+    }, 1000);
+  }
+
+  function autoNextQuestion() {
+    if(currentIndex < questions.length - 1) {
+      currentIndex++;
+      renderQuestion(currentIndex);
+    } else {
+      finishTest();
+    }
+  }
+
+  // حفظ الإجابة تلقائيًا
+  function saveAnswer(index, answer) {
+    userAnswers[index] = answer;
+    renderProgressList();
+    saveStateToStorage();
+  }
+
+  // عرض السؤال الحالي
+  function renderQuestion(index) {
+    const q = questions[index];
+    questionHeader.textContent = `السؤال ${index + 1} من ${questions.length}`;
+    questionText.textContent = q.question;
+
+    optionsList.innerHTML = '';
+    shortAnswerInput.style.display = 'none';
+    shortAnswerInput.value = '';
+
+    if(q.type === 'multiple_choice') {
+      q.options.forEach((opt, i) => {
+        const li = document.createElement('li');
+        li.textContent = opt;
+        li.tabIndex = 0;
+        if(userAnswers[index] === i) li.classList.add('selected');
+        li.addEventListener('click', () => {
+          saveAnswer(index, i);
+          updateSelection(i);
+        });
+        li.addEventListener('keypress', e => {
+          if(e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            li.click();
+          }
+        });
+        optionsList.appendChild(li);
+      });
+      optionsList.style.display = 'block';
+      shortAnswerInput.style.display = 'none';
+    } else if(q.type === 'short_answer') {
+      shortAnswerInput.style.display = 'block';
+      shortAnswerInput.value = userAnswers[index] || '';
+      optionsList.style.display = 'none';
+      shortAnswerInput.focus();
+      shortAnswerInput.oninput = () => {
+        saveAnswer(index, shortAnswerInput.value.trim());
+      };
+    }
+
+    prevBtn.disabled = index === 0;
+    nextBtn.style.display = index === questions.length - 1 ? 'none' : 'inline-block';
+    finishBtn.style.display = index === questions.length - 1 ? 'inline-block' : 'none';
+
+    startTimer();
+    renderProgressList();
+  }
+
+  // تحديث تمييز الخيار المحدد
+  function updateSelection(selectedIndex) {
+    [...optionsList.children].forEach((li, i) => {
+      li.classList.toggle('selected', i === selectedIndex);
+    });
+  }
+
+  // عرض قائمة التقدم
+  function renderProgressList() {
+    progressList.innerHTML = '';
+    questions.forEach((q, i) => {
+      const btn = document.createElement('button');
+      btn.textContent = `س${i+1}`;
+      btn.classList.toggle('current', i === currentIndex);
+      if(userAnswers[i] !== null) {
+        if(q.type === 'multiple_choice') {
+          btn.classList.add(userAnswers[i] === q.options.indexOf(q.correct_answer) ? 'correct' : 'incorrect');
+        } else if(q.type === 'short_answer') {
+          btn.classList.add(userAnswers[i].toLowerCase() === (q.answer || '').toLowerCase() ? 'correct' : 'incorrect');
+        }
+      }
+      btn.addEventListener('click', () => {
+        currentIndex = i;
+        renderQuestion(currentIndex);
+      });
+      progressList.appendChild(btn);
+    });
+  }
+
+  // حفظ الحالة في localStorage
+  function saveStateToStorage() {
+    localStorage.setItem('cyberExamProgress', JSON.stringify({
+      userAnswers,
+      currentIndex
+    }));
+  }
+
+  // استرجاع الحالة من localStorage
+  function loadStateFromStorage() {
+    const data = localStorage.getItem('cyberExamProgress');
+    if(data) {
+      try {
+        const parsed = JSON.parse(data);
+        if(parsed.userAnswers && parsed.currentIndex >= 0 && parsed.currentIndex < questions.length) {
+          userAnswers = parsed.userAnswers;
+          currentIndex = parsed.currentIndex;
+          return true;
+        }
+      } catch(e) {}
+    }
+    return false;
+  }
+
+  // عرض النتائج
+  function finishTest() {
+    clearInterval(timerInterval);
+    questionHeader.textContent = '';
+    questionText.textContent = '';
+    optionsList.innerHTML = '';
+    shortAnswerInput.style.display = 'none';
+    prevBtn.style.display = 'none';
+    nextBtn.style.display = 'none';
+    finishBtn.style.display = 'none';
+    timerText.textContent = '--';
+    timerCircle.style.strokeDashoffset = timerCircumference;
+
+    let correctCount = 0;
+    let html = '<h2>نتيجة الاختبار</h2>';
+    questions.forEach((q, i) => {
+      let isCorrect = false;
+      const ua = userAnswers[i];
+      if(q.type === 'multiple_choice') {
+        isCorrect = ua !== null && q.options[ua] === q.correct_answer;
+      } else {
+        isCorrect = ua !== null && ua.toLowerCase() === (q.answer || '').toLowerCase();
+      }
+      if(isCorrect) correctCount++;
+      html += `<div class="result-question">
+          <b>السؤال ${i+1}:</b> ${q.question}<br>
+          <span class="${isCorrect ? 'correct' : 'incorrect'}">إجابتك: ${ua === null || ua === '' ? '(لم تجب)' : (q.type === 'multiple_choice' ? q.options[ua] : ua)}<br>الإجابة الصحيحة: ${q.correct_answer || q.answer}</span>
+        </div>`;
+    });
+    html = `<p style="text-align:center; font-size:1.8rem; margin-bottom:2rem;">لقد أجبت بشكل صحيح على ${correctCount} من أصل ${questions.length} سؤال</p>` + html;
+
+    resultsSection.innerHTML = html;
+    resultsSection.hidden = false;
+  }
+
+  // أزرار التنقل
+  prevBtn.addEventListener('click', () => {
+    if(currentIndex > 0) {
+      currentIndex--;
+      renderQuestion(currentIndex);
+      saveStateToStorage();
+    }
+  });
+  nextBtn.addEventListener('click', () => {
+    if(currentIndex < questions.length - 1) {
+      currentIndex++;
+      renderQuestion(currentIndex);
+      saveStateToStorage();
+    }
+  });
+  finishBtn.addEventListener('click', () => {
+    finishTest();
+    localStorage.removeItem('cyberExamProgress');
+  });
+
+  // زر إظهار وإخفاء الشريط الجانبي
+  toggleSidebarBtn.addEventListener('click', () => {
+    const sidebar = document.getElementById('sidebar');
+    const expanded = toggleSidebarBtn.getAttribute('aria-expanded') === 'true';
+    if(expanded) {
+      sidebar.classList.add('hidden');
+      toggleSidebarBtn.textContent = 'إظهار القائمة';
+      toggleSidebarBtn.setAttribute('aria-expanded', 'false');
+    } else {
+      sidebar.classList.remove('hidden');
+      toggleSidebarBtn.textContent = 'إخفاء القائمة';
+      toggleSidebarBtn.setAttribute('aria-expanded', 'true');
+    }
+  });
+
+  // استرجاع الحالة لو وجدت
+  if(!loadStateFromStorage()) {
+    renderQuestion(currentIndex);
+  } else {
+    renderQuestion(currentIndex);
+  }
+})();
+</script>
+</body>
+</html>
 
