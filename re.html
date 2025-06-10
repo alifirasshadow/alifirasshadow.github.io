@@ -91,7 +91,7 @@
                     <pre class="terminal-code p-4 rounded-lg text-sm overflow-x-auto"><code>$ python2 vol.py -f Challenge.raw imageinfo</code></pre>
                     <p class="mt-4"><strong>Conclusion:</strong> The results clearly indicated that the working environment is <strong>`Win7SP1x86`</strong>, which was the profile adopted for all subsequent analysis stages.</p>
                 </div>
-                <img src="https://filebin.net/dzgwfq32fe6djx7p/1.png" alt="Operating System Profile Identification" class="w-full h-auto mt-4 border-t-4 border-blue-500">
+                <img src="https://i.imgur.com/pew8x5d.png" alt="Operating System Profile Identification" class="w-full h-auto mt-4 border-t-4 border-blue-500">
             </div>
 
             <!-- Step 2: Process List -->
@@ -105,7 +105,7 @@
                     <pre class="terminal-code p-4 rounded-lg text-sm overflow-x-auto"><code>$ python2 vol.py -f Challenge.raw --profile=Win7SP1x86 pslist</code></pre>
                     <p class="mt-4"><strong>Conclusion:</strong> The list revealed the presence of the Command Prompt process `cmd.exe` (PID 2096), an important lead indicating direct user interaction with the system via the command line.</p>
                 </div>
-                <img src="https://filebin.net/dzgwfq32fe6djx7p/2.png" alt="List of processes extracted from memory" class="w-full h-auto mt-4 border-t-4 border-blue-500">
+                <img src="https://i.imgur.com/nYRxBNc.png" alt="List of processes extracted from memory" class="w-full h-auto mt-4 border-t-4 border-blue-500">
             </div>
 
             <!-- Step 3: CMD Scan -->
@@ -119,7 +119,7 @@
                     <pre class="terminal-code p-4 rounded-lg text-sm overflow-x-auto"><code>$ python2 vol.py -f Challenge.raw --profile=Win7SP1x86 cmdscan</code></pre>
                     <p class="mt-4"><strong>Conclusion:</strong> This step uncovered a pivotal clue, revealing that the user had run a Python script from the desktop. This discovery shifted the investigation's focus to this script and its output.</p>
                 </div>
-                <img src="https://filebin.net/dzgwfq32fe6djx7p/3.png" alt="Command revealing the execution of a Python script" class="w-full h-auto mt-4 border-t-4 border-blue-500">
+                <img src="https://i.imgur.com/8ZDO21Q.png" alt="Command revealing the execution of a Python script" class="w-full h-auto mt-4 border-t-4 border-blue-500">
             </div>
 
             <!-- Step 4: Consoles -->
@@ -133,7 +133,7 @@
                     <pre class="terminal-code p-4 rounded-lg text-sm overflow-x-auto"><code>$ python2 vol.py -f Challenge.raw --profile=Win7SP1x86 consoles</code></pre>
                     <p class="mt-4"><strong>Conclusion:</strong> This step successfully recovered the command prompt screen, which showed that the script printed a string: `335d366f5d6031767631707f`. This string appeared to be a Hex-encoded ciphertext.</p>
                 </div>
-                <img src="https://filebin.net/dzgwfq32fe6djx7p/4.png" alt="Recovery of the command prompt screen and the encrypted string" class="w-full h-auto mt-4 border-t-4 border-blue-500">
+                <img src="https://i.imgur.com/zIfM6JL.png" alt="Recovery of the command prompt screen and the encrypted string" class="w-full h-auto mt-4 border-t-4 border-blue-500">
             </div>
 
             <!-- Step 5: Decryption -->
@@ -146,7 +146,7 @@
                      <p class="mb-4">Based on the challenge hints ("environmental activist", "Thanos"), the environment variables (`envars`) were analyzed. A suspicious variable named `Thanos` was found with the value `xor and password`. This was the key. The first part of the key (`xor`) was used to decrypt the string.</p>
                      <p class="mt-4"><strong>Conclusion:</strong> The key `2` revealed a meaningful text, which was part of the final flag.</p>
                 </div>
-                 <img src="https://filebin.net/dzgwfq32fe6djx7p/5.png" alt="Result of XOR decryption showing part of the flag" class="w-full h-auto mt-4 border-t-4 border-blue-500">
+                 <img src="https://i.imgur.com/npcK1Kr.png" alt="Result of XOR decryption showing part of the flag" class="w-full h-auto mt-4 border-t-4 border-blue-500">
             </div>
             
             <!-- Step 6: Hashdump -->
@@ -160,7 +160,7 @@
                     <pre class="terminal-code p-4 rounded-lg text-sm overflow-x-auto"><code>$ python2 vol.py -f Challenge.raw --profile=Win7SP1x86 hashdump</code></pre>
                     <p class="mt-4"><strong>Conclusion:</strong> The NTLM hash for the user `hello` was extracted: `101da33f44e92c27835e64322d72e8b7`.</p>
                 </div>
-                <img src="https://filebin.net/dzgwfq32fe6djx7p/6.png" alt="Extracting password hashes from memory" class="w-full h-auto mt-4 border-t-4 border-blue-500">
+                <img src="https://i.imgur.com/3eb1rRi.png" alt="Extracting password hashes from memory" class="w-full h-auto mt-4 border-t-4 border-blue-500">
             </div>
 
              <!-- Step 7: Final Flag -->
@@ -177,7 +177,7 @@
                         <p class="mt-4 text-gray-400">Case closed successfully.</p>
                     </div>
                 </div>
-                 <img src="https://filebin.net/dzgwfq32fe6djx7p/7.png" alt="Successful hash cracking result" class="w-full h-auto mt-4 border-t-4 border-green-500">
+                 <img src="https://i.imgur.com/Z8oBlw8.png" alt="Successful hash cracking result" class="w-full h-auto mt-4 border-t-4 border-green-500">
             </div>
 
         </div>
@@ -190,4 +190,3 @@
 
 </body>
 </html>
-
